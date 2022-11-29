@@ -28,6 +28,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<!-- debugging purpose - not required by product -->
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		<dependency>
@@ -40,6 +41,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
+			<!-- debugging purpose - not required by product -->
 			<artifactId>thymeleaf-extras-springsecurity5</artifactId>
 		</dependency>
 
