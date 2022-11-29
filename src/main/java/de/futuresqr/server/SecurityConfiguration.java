@@ -26,11 +26,8 @@ package de.futuresqr.server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
@@ -62,20 +59,11 @@ public class SecurityConfiguration {
 				// allow all other requests
 				.anyRequest().permitAll();
 		http.formLogin().loginProcessingUrl(PATH_REST_AUTHENTICATE).successHandler(new LoginSuccessHandler());
-		http.userDetailsService(getUserDetails());
 		// CSRF configuration for Angular
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 		// enable remember-me
 		http.rememberMe().alwaysRemember(true);
 		return http.build();
-	}
-
-	private InMemoryUserDetailsManager getUserDetails() {
-		InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
-		UserDetails user = User.builder().username("user").password(passwordEncoder().encode("password")).roles("USER")
-				.build();
-		userDetailsManager.createUser(user);
-		return userDetailsManager;
 	}
 
 	@Bean
