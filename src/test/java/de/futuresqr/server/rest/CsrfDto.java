@@ -21,16 +21,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package de.futuresqr.server;
+package de.futuresqr.server.rest;
 
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import lombok.Data;
 
-public class ServletInitializer extends SpringBootServletInitializer {
+/**
+ * Simple CSRF data token.
+ */
+@Data
+public class CsrfDto {
 
-	@Override
-	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(FutureSqrServerApplication.class);
-	}
-
+	private String parameterName;
+	private String token;
+	private String headerName;
 }

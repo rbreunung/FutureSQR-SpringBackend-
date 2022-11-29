@@ -24,6 +24,7 @@
 package de.futuresqr.server;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,6 +39,7 @@ import de.futuresqr.server.rest.user.LoginSuccessHandler;
 /**
  * Main security configuration of the server.
  */
+@Configuration
 public class SecurityConfiguration {
 
 	// path for all server REST end points
