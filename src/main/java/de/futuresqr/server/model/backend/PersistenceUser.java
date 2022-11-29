@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -57,7 +58,7 @@ public class PersistenceUser {
 	private String loginName;
 	private String password;
 	@Builder.Default
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> grantedAuthorities = new HashSet<>();
 
 	private String avatarLocation;
