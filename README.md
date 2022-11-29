@@ -1,6 +1,6 @@
 # FutureSQR
 
-[![Java CI with Maven](https://github.com/rbreunung/FutureSQR-SpringBackend/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/rbreunung/FutureSQR-SpringBackend/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/rbreunung/FutureSQR-SpringBackend-SpringBoot2/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/rbreunung/FutureSQR-SpringBackend-SpringBoot2/actions/workflows/maven.yml)
 
 Future Source Quality Review -- Code Review Tool for Trunk-Based-Development.
 
