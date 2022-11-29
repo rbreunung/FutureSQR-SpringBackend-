@@ -35,5 +35,5 @@ import de.futuresqr.server.model.backend.PersistenceUser;
  */
 public interface UserRepository extends JpaRepository<PersistenceUser, UUID> {
 	
-	PersistenceUser findByLoginName(@NonNull String name);
+	PersistenceUser findByLoginName(@NonNull String loginName);
 }
