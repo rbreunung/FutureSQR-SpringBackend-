@@ -56,7 +56,8 @@ public class ReauthenticateController {
 		if (assumedusername == null || assumedusername.isBlank() || username == null || username.isBlank()
 				|| (!username.equals(assumedusername))) {
 			try {
-				request.logout();
+				if (authentication != null)
+					request.logout();
 			} catch (ServletException e) {
 				log.error("Error during session logout.", e);
 			}
