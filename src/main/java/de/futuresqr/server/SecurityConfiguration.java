@@ -44,8 +44,9 @@ public class SecurityConfiguration {
 	private static final String PATH_REST = "/rest/**";
 	// path used for login
 	private static final String PATH_REST_AUTHENTICATE = "/rest/user/authenticate";
+	private static final String PATH_REST_LOGOUT = "/rest/user/logout";
 	// path used for custom re-authentication / remember-me mechanism
-	private static final String PATH_REST_REAUTHENTICATE = "/rest/user/reauthenticate";
+	public static final String PATH_REST_REAUTHENTICATE = "/rest/user/reauthenticate";
 	// path used for receiving CSRF token
 	public static final String PATH_REST_CSRF = "/rest/user/csrf";
 
@@ -61,6 +62,7 @@ public class SecurityConfiguration {
 				.anyRequest().permitAll();
 		http.formLogin().loginProcessingUrl(PATH_REST_AUTHENTICATE)
 				.successHandler(new LoginSuccessHandler(userRepository));
+		http.logout().logoutUrl(PATH_REST_LOGOUT);
 		// CSRF configuration for Angular
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 		// enable remember-me
