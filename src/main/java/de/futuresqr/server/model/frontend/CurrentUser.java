@@ -65,7 +65,8 @@ public class CurrentUser {
 		CurrentUser user = userBuilder.build();
 
 		persistenceUser.getGrantedAuthorities().stream().filter(a -> a.startsWith(PREFIX_ROLE))
-				.map(a -> a.substring(PREFIX_ROLE.length())).forEach(user.getCapabilities().getRoles()::add);
+				.map(a -> a.substring(PREFIX_ROLE.length()).toLowerCase())
+				.forEach(user.getCapabilities().getRoles()::add);
 
 		return user;
 	}
