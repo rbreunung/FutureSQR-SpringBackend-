@@ -23,8 +23,14 @@
  */
 package de.futuresqr.server.model.frontend;
 
+import static de.futuresqr.server.service.user.FsqrUserDetailsManager.PREFIX_ROLE;
+
 import java.util.UUID;
 
+import de.futuresqr.server.model.backend.PersistenceUser;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -32,6 +38,8 @@ import lombok.NonNull;
  * Client model of the current user.
  */
 @Data
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class CurrentUser {
 
 	@NonNull
@@ -41,7 +49,24 @@ public class CurrentUser {
 	@NonNull
 	private String displayname;
 	private String avatarlocation;
+	@NonNull
 	private String email;
 	@NonNull
+	@Builder.Default
 	private CurrentUserCapabilities capabilities = new CurrentUserCapabilities();
+
+	public static CurrentUser from(PersistenceUser persistenceUser) {
+
+		CurrentUserBuilder userBuilder = new CurrentUserBuilder();
+
+		userBuilder.uuid(persistenceUser.getUuid()).loginname(persistenceUser.getLoginName())
+				.displayname(persistenceUser.getDisplayName()).avatarlocation(persistenceUser.getAvatarLocation())
+				.email(persistenceUser.getEmail());
+		CurrentUser user = userBuilder.build();
+
+		persistenceUser.getGrantedAuthorities().stream().filter(a -> a.startsWith(PREFIX_ROLE))
+				.map(a -> a.substring(PREFIX_ROLE.length())).forEach(user.getCapabilities().getRoles()::add);
+
+		return user;
+	}
 }
