@@ -31,6 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import de.futuresqr.server.persistence.UserRepository;
 import de.futuresqr.server.rest.user.LoginSuccessHandler;
 
 /**
@@ -49,7 +50,7 @@ public class SecurityConfiguration {
 	public static final String PATH_REST_CSRF = "/rest/user/csrf";
 
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http, UserRepository userRepository) throws Exception {
 		// authorization requirements section
 		http.authorizeHttpRequests()
 				// this rest path can be accessed by everyone
@@ -58,7 +59,8 @@ public class SecurityConfiguration {
 				.antMatchers(PATH_REST).authenticated()
 				// allow all other requests
 				.anyRequest().permitAll();
-		http.formLogin().loginProcessingUrl(PATH_REST_AUTHENTICATE).successHandler(new LoginSuccessHandler());
+		http.formLogin().loginProcessingUrl(PATH_REST_AUTHENTICATE)
+				.successHandler(new LoginSuccessHandler(userRepository));
 		// CSRF configuration for Angular
 		http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 		// enable remember-me

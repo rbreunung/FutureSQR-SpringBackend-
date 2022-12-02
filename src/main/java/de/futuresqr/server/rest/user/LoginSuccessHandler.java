@@ -23,6 +23,8 @@
  */
 package de.futuresqr.server.rest.user;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,15 +34,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import de.futuresqr.server.model.backend.PersistenceUser;
+import de.futuresqr.server.model.frontend.CurrentUser;
+import de.futuresqr.server.persistence.UserRepository;
+
 /**
  * This class creates the response to the client on successful authentication.
  */
 public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
+	private final UserRepository userRepository;
+
+	public LoginSuccessHandler(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException {
 		response.setStatus(HttpStatus.OK.value());
-		response.getWriter().print("Hello World");
+		String username = authentication.getName();
+		PersistenceUser persistenceUser = userRepository.findByLoginName(username);
+		CurrentUser clientUser = CurrentUser.from(persistenceUser);
+		response.setContentType(APPLICATION_JSON_VALUE);
+		new ObjectMapper().writeValue(response.getWriter(), clientUser);
 	}
 }
