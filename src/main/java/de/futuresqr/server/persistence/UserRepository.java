@@ -27,12 +27,14 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Service;
 
 import de.futuresqr.server.model.backend.PersistenceUser;
 
 /**
  * This is the user database of FutureSQR.
  */
+@Service
 public interface UserRepository extends JpaRepository<PersistenceUser, UUID> {
 	
 	PersistenceUser findByLoginName(@NonNull String loginName);
