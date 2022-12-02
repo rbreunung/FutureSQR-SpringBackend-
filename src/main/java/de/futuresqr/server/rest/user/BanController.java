@@ -26,6 +26,8 @@ package de.futuresqr.server.rest.user;
 import java.time.Instant;
 import java.util.UUID;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,6 +46,7 @@ public class BanController {
 	private UserRepository userRepository;
 
 	@PostMapping("/rest/user/ban")
+	@Transactional
 	ResponseEntity<CurrentUser> postUserBan(@RequestPart(UserProperties.UUID) String uuid) {
 
 		PersistenceUser persistenceUser = userRepository.getReferenceById(UUID.fromString(uuid));
@@ -63,6 +66,7 @@ public class BanController {
 	}
 
 	@PostMapping("/rest/user/unban")
+	@Transactional
 	ResponseEntity<CurrentUser> postUserUnban(@RequestPart(UserProperties.UUID) String uuid) {
 
 		PersistenceUser persistenceUser = userRepository.getReferenceById(UUID.fromString(uuid));

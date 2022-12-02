@@ -25,6 +25,7 @@ package de.futuresqr.server.rest.user;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -49,6 +50,7 @@ public class ReauthenticateController {
 	private UserRepository userRepository;
 
 	@PostMapping(SecurityConfiguration.PATH_REST_REAUTHENTICATE)
+	@Transactional
 	CurrentUser getUserReauthenticate(HttpServletRequest request, Authentication authentication,
 			@RequestPart(name = "assumedusername", required = false) String assumedusername) {
 
