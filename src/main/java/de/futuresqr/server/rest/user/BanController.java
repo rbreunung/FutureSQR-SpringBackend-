@@ -35,8 +35,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.futuresqr.server.model.backend.PersistenceUser;
-import de.futuresqr.server.model.frontend.CurrentUser;
-import de.futuresqr.server.model.frontend.UserProperties;
+import de.futuresqr.server.model.frontend.SimpleUser;
 import de.futuresqr.server.persistence.UserRepository;
 
 @RestController
@@ -47,7 +46,7 @@ public class BanController {
 
 	@PostMapping("/rest/user/ban")
 	@Transactional
-	ResponseEntity<CurrentUser> postUserBan(@RequestPart(UserProperties.UUID) String uuid) {
+	ResponseEntity<SimpleUser> postUserBan(@RequestPart("userUuid") String uuid) {
 
 		PersistenceUser persistenceUser = userRepository.getReferenceById(UUID.fromString(uuid));
 
@@ -62,12 +61,12 @@ public class BanController {
 
 		persistenceUser = userRepository.save(persistenceUser);
 
-		return ResponseEntity.ok(CurrentUser.from(persistenceUser));
+		return ResponseEntity.ok(SimpleUser.from(persistenceUser));
 	}
 
 	@PostMapping("/rest/user/unban")
 	@Transactional
-	ResponseEntity<CurrentUser> postUserUnban(@RequestPart(UserProperties.UUID) String uuid) {
+	ResponseEntity<SimpleUser> postUserUnban(@RequestPart("userUuid") String uuid) {
 
 		PersistenceUser persistenceUser = userRepository.getReferenceById(UUID.fromString(uuid));
 
@@ -82,6 +81,6 @@ public class BanController {
 
 		persistenceUser = userRepository.save(persistenceUser);
 
-		return ResponseEntity.ok(CurrentUser.from(persistenceUser));
+		return ResponseEntity.ok(SimpleUser.from(persistenceUser));
 	}
 }
