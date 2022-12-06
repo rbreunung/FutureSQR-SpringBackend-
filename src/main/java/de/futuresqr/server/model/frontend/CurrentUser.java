@@ -33,6 +33,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.extern.jackson.Jacksonized;
 
 /**
  * Client model of the user with all relevant data to represent the current user
@@ -41,12 +42,14 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@Jacksonized
 public class CurrentUser {
 
 	@NonNull
 	private UUID uuid;
 	@NonNull
 	private String loginname;
+	private boolean isbanned;
 	@NonNull
 	private String displayname;
 	private String avatarlocation;
