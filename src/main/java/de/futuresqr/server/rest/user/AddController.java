@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 import de.futuresqr.server.model.backend.PersistenceUser;
 import de.futuresqr.server.model.frontend.SimpleUser;
 import de.futuresqr.server.persistence.UserRepository;
-import de.futuresqr.server.service.user.UserUuidGenerator;
+import de.futuresqr.server.service.user.UuidGenerator;
 
 /**
  * Create new user.
@@ -49,7 +49,7 @@ public class AddController {
 	private PasswordEncoder encoder;
 
 	@Autowired
-	private UserUuidGenerator generator;
+	private UuidGenerator generator;
 
 	@PostMapping("/rest/user/add")
 	SimpleUser postUserAdd(@RequestPart("userName") String loginName, @RequestPart("displayName") String displayName,
@@ -60,7 +60,7 @@ public class AddController {
 		hasText(loginName, "Login name required.");
 		hasText(password, "Password required");
 
-		PersistenceUser user = PersistenceUser.builder().uuid(generator.getUuid(loginName)).displayName(displayName)
+		PersistenceUser user = PersistenceUser.builder().uuid(generator.getUserUuid(loginName)).displayName(displayName)
 				.loginName(loginName).email(email).password(encoder.encode(password)).build();
 		user = userRepository.save(user);
 

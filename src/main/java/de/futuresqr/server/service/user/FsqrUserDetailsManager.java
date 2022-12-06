@@ -38,6 +38,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import de.futuresqr.server.model.backend.PersistenceUser;
 import de.futuresqr.server.persistence.UserRepository;
@@ -60,23 +61,23 @@ public class FsqrUserDetailsManager implements UserDetailsManager {
 
 	@Autowired
 	@Transactional
-	private void setPasswordEncoder(PasswordEncoder encoder) {
+	private void initDefaultUsers(PasswordEncoder encoder, UuidGenerator generator) {
 
 		if (userRepository.count() == 0) {
 			log.info("Empty user repository. Set default users.");
 
 			// user
 			Set<String> authorities = stream(new String[] { PREFIX_ROLE + ROLE_USER }).collect(toSet());
-			PersistenceUser user = PersistenceUser.builder().uuid(randomUUID()).loginName("user")
+			PersistenceUser user = PersistenceUser.builder().uuid(generator.getUserUuid("user")).loginName("user")
 					.password(encoder.encode("password")).grantedAuthorities(authorities).displayName("Otto Normal")
 					.avatarLocation(randomUUID().toString()).email("user@mindscan.local").build();
 			userRepository.save(user);
 
 			// admin
 			authorities = stream(new String[] { PREFIX_ROLE + ROLE_USER, PREFIX_ROLE + ROLE_ADMIN }).collect(toSet());
-			user = PersistenceUser.builder().uuid(randomUUID()).loginName("admin").password(encoder.encode("admin"))
-					.grantedAuthorities(authorities).displayName("Super Power").avatarLocation(randomUUID().toString())
-					.email("admin@mindscan.local").build();
+			user = PersistenceUser.builder().uuid(generator.getUserUuid("admin")).loginName("admin")
+					.password(encoder.encode("admin")).grantedAuthorities(authorities).displayName("Super Power")
+					.avatarLocation(randomUUID().toString()).email("admin@mindscan.local").build();
 			userRepository.save(user);
 		}
 	}
@@ -84,6 +85,10 @@ public class FsqrUserDetailsManager implements UserDetailsManager {
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+		Assert.notNull(username, "Username is required.");
+
+		@SuppressWarnings("null")
 		PersistenceUser user = userRepository.findByLoginName(username);
 		if (user != null) {
 			return User.builder().username(user.getLoginName()).password(user.getPassword())
@@ -118,7 +123,7 @@ public class FsqrUserDetailsManager implements UserDetailsManager {
 	@Transactional
 	public boolean userExists(String username) {
 
-		return userRepository.findByLoginName(username) != null;
+		return username == null ? false : userRepository.findByLoginName(username) != null;
 	}
 
 }
