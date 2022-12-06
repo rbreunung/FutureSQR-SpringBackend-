@@ -23,6 +23,7 @@
  */
 package de.futuresqr.server.service.user;
 
+import static de.futuresqr.server.service.user.UuidGenerator.uuidForUserName;
 import static java.util.Arrays.stream;
 import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toSet;
@@ -61,21 +62,22 @@ public class FsqrUserDetailsManager implements UserDetailsManager {
 
 	@Autowired
 	@Transactional
-	private void initDefaultUsers(PasswordEncoder encoder, UuidGenerator generator) {
+	private void initDefaultUsers(PasswordEncoder encoder) {
 
 		if (userRepository.count() == 0) {
 			log.info("Empty user repository. Set default users.");
 
 			// user
 			Set<String> authorities = stream(new String[] { PREFIX_ROLE + ROLE_USER }).collect(toSet());
-			PersistenceUser user = PersistenceUser.builder().uuid(generator.getUserUuid("user")).loginName("user")
-					.password(encoder.encode("password")).grantedAuthorities(authorities).displayName("Otto Normal")
-					.avatarLocation(randomUUID().toString()).email("user@mindscan.local").build();
+			PersistenceUser user = PersistenceUser.builder().uuid(uuidForUserName("user"))
+					.loginName("user").password(encoder.encode("password")).grantedAuthorities(authorities)
+					.displayName("Otto Normal").avatarLocation(randomUUID().toString()).email("user@mindscan.local")
+					.build();
 			userRepository.save(user);
 
 			// admin
 			authorities = stream(new String[] { PREFIX_ROLE + ROLE_USER, PREFIX_ROLE + ROLE_ADMIN }).collect(toSet());
-			user = PersistenceUser.builder().uuid(generator.getUserUuid("admin")).loginName("admin")
+			user = PersistenceUser.builder().uuid(uuidForUserName("admin")).loginName("admin")
 					.password(encoder.encode("admin")).grantedAuthorities(authorities).displayName("Super Power")
 					.avatarLocation(randomUUID().toString()).email("admin@mindscan.local").build();
 			userRepository.save(user);

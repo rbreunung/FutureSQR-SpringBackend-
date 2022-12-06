@@ -1,7 +1,7 @@
 /**
  * MIT License
  *
- * Copyright (c) 2022 Robert Breunung
+ * Copyright (c) 2022 Maxim Gansert
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,37 +23,49 @@
  */
 package de.futuresqr.server.service.user;
 
+import java.nio.ByteBuffer;
 import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-
-import com.github.f4b6a3.uuid.enums.UuidNamespace;
-import com.github.f4b6a3.uuid.factory.rfc4122.NameBasedMd5Factory;
 
 /**
  * We want to generate custom UUIDs.
  */
-@Service
 public class UuidGenerator {
 
-	private final NameBasedMd5Factory factory;
+	// RFC 4122 - https://www.rfc-editor.org/rfc/rfc4122.html#section-4.3
+	public static final UUID NAMESPACE_OID = UUID.fromString("6ba7b812-9dad-11d1-80b4-00c04fd430c8");
 
-	private final UUID FUTURESQR_NAMESPACE_OID;
-	private final UUID SYSCONFIG_NAMESPACE_OID;
-	private final UUID USERNAMES_NAMESPACE_OID;
+	public static final UUID FUTURESQR_NAMESPACE_OID = buildUUIDByNamespace(NAMESPACE_OID, "FutureSQR");
+	public static final UUID SYSCONFIG_NAMESPACE_OID = buildUUIDByNamespace(FUTURESQR_NAMESPACE_OID, "SystemInstance");
+	public static final UUID USERNAMES_NAMESPACE_OID = buildUUIDByNamespace(FUTURESQR_NAMESPACE_OID, "SystemUsers");
 
-	public UuidGenerator() {
-		factory = new NameBasedMd5Factory(UuidNamespace.NAMESPACE_OID);
-		FUTURESQR_NAMESPACE_OID = factory.create("FutureSQR");
-		SYSCONFIG_NAMESPACE_OID = factory.create(FUTURESQR_NAMESPACE_OID, "SystemInstance");
-		USERNAMES_NAMESPACE_OID = factory.create(FUTURESQR_NAMESPACE_OID, "SystemUsers");
+	public static UUID buildUUIDByNamespace(UUID namespace, String name) {
+		long nsMsb = namespace.getMostSignificantBits();
+		long nsLsb = namespace.getLeastSignificantBits();
+		byte[] nameBytes = name.getBytes();
+
+		return UUID.nameUUIDFromBytes(joinNameSpaceBytes(nsMsb, nsLsb, nameBytes));
 	}
 
-	public UUID getSystemUuid(String key) {
-		return factory.create(SYSCONFIG_NAMESPACE_OID, key);
+	public static UUID uuidForUserName(String name) {
+		return buildUUIDByNamespace(USERNAMES_NAMESPACE_OID, name);
 	}
 
-	public UUID getUserUuid(String loginName) {
-		return factory.create(USERNAMES_NAMESPACE_OID, loginName);
+	private static byte[] joinNameSpaceBytes(long nsMsb, long nsLsb, byte[] nameBytes) {
+		ByteBuffer bb = ByteBuffer.allocate(8 + 8 + nameBytes.length);
+
+		bb.put(longToBytes(nsMsb));
+		bb.put(longToBytes(nsLsb));
+		bb.put(nameBytes);
+
+		return bb.array();
+	}
+
+	private static byte[] longToBytes(long l) {
+		byte[] result = new byte[Long.BYTES];
+		for (int i = Long.BYTES - 1; i >= 0; i--) {
+			result[i] = (byte) (l & 0xFF);
+			l >>= Byte.SIZE;
+		}
+		return result;
 	}
 }

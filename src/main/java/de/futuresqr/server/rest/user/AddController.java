@@ -23,6 +23,7 @@
  */
 package de.futuresqr.server.rest.user;
 
+import static de.futuresqr.server.service.user.UuidGenerator.uuidForUserName;
 import static org.springframework.util.Assert.hasText;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 import de.futuresqr.server.model.backend.PersistenceUser;
 import de.futuresqr.server.model.frontend.SimpleUser;
 import de.futuresqr.server.persistence.UserRepository;
-import de.futuresqr.server.service.user.UuidGenerator;
 
 /**
  * Create new user.
@@ -48,9 +48,6 @@ public class AddController {
 	@Autowired
 	private PasswordEncoder encoder;
 
-	@Autowired
-	private UuidGenerator generator;
-
 	@PostMapping("/rest/user/add")
 	SimpleUser postUserAdd(@RequestPart("userName") String loginName, @RequestPart("displayName") String displayName,
 			@RequestPart("contactEmail") String email, @RequestPart("password") String password) {
@@ -60,8 +57,8 @@ public class AddController {
 		hasText(loginName, "Login name required.");
 		hasText(password, "Password required");
 
-		PersistenceUser user = PersistenceUser.builder().uuid(generator.getUserUuid(loginName)).displayName(displayName)
-				.loginName(loginName).email(email).password(encoder.encode(password)).build();
+		PersistenceUser user = PersistenceUser.builder().uuid(uuidForUserName(loginName))
+				.displayName(displayName).loginName(loginName).email(email).password(encoder.encode(password)).build();
 		user = userRepository.save(user);
 
 		return SimpleUser.from(user);

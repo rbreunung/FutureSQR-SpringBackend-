@@ -49,7 +49,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UuidGeneratorTest {
 
-	private UuidGenerator generator = new UuidGenerator();
 	private static final ArrayList<CurrentUser> defaultUsers = new ArrayList<>();
 
 	@BeforeAll
@@ -69,7 +68,7 @@ public class UuidGeneratorTest {
 	Collection<DynamicTest> test_readUuidFromDefaultSetup_matchesCurrentGenerator() {
 		return defaultUsers.stream()
 				.map(user -> DynamicTest.dynamicTest("test " + user.getLoginname(),
-						() -> assertEquals(user.getUuid(), generator.getUserUuid(user.getLoginname()))))
+						() -> assertEquals(user.getUuid(), UuidGenerator.uuidForUserName(user.getLoginname()))))
 				.collect(toList());
 	}
 
